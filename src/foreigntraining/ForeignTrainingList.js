@@ -24,18 +24,18 @@ class ForeignTrainingList extends Component{
         
     }
 
-    // componentDidMount() {
-    //     fetch(API_BASE_URL + "/foreigntrainings")
-    //         .then(res => res.json())
-    //         .then(
-    //             (foreigntrainings) => {
-    //                 this.setState({ foreigntrainings: foreigntrainings });
-    //             },
-    //             (error) => {
-    //                 alert(error);
-    //             }
-    //         )
-    // }
+    componentDidMount() {
+        fetch(API_BASE_URL + "/foreigntrainings")
+            .then(res => res.json())
+            .then(
+                (foreigntrainings) => {
+                    this.setState({ foreigntrainings: foreigntrainings });
+                },
+                (error) => {
+                    alert(error);
+                }
+            )
+    }
 
 
     addForeignTrainingInfo(){

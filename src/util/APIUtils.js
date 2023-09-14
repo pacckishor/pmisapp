@@ -154,11 +154,3 @@ export function savePromotion(promotionRequest){
         body: JSON.stringify(promotionRequest)
     }); 
 }
-
-export function saveSpouseInfo(spouseInfoRequest){
-    return request({
-        url: API_BASE_URL + "/spouseinfo",
-        method: 'POST',
-        body: JSON.stringify(spouseInfoRequest)
-    }); 
-}
