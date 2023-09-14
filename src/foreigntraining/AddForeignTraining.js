@@ -100,7 +100,7 @@ class AddForeignTraining extends Component {
                     message: 'PMIS',
                     description: "Record saved.",
                 });
-                this.props.history.push("/foreigntraininglist");
+                this.props.history.push("/foreigntraining/list");
             }).catch(error => {
             notification.error({
                     message: 'PMIS',

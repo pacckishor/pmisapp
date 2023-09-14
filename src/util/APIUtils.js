@@ -147,6 +147,24 @@ export function saveForeignTraining(foreignTrainingInfoRequest){
 }
 
 
+export function saveLocationType(locationTypeRequest){
+    return request({
+        url: API_BASE_URL + "/locationtype",
+        method: 'POST',
+        body: JSON.stringify(locationTypeRequest)
+    }); 
+}
+
+
+export function saveLocation(locationRequest){
+    return request({
+        url: API_BASE_URL + "/location",
+        method: 'POST',
+        body: JSON.stringify(locationRequest)
+    }); 
+}
+
+
 export function savePromotion(promotionRequest){
     return request({
         url: API_BASE_URL + "/promotion",
