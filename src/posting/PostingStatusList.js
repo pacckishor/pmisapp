@@ -88,13 +88,13 @@ class PostingStatusList extends Component {
                 return <p>Loading...</p>;
             }
 
-            const data = [];
-            response.forEach((record, recordIndex) => {
-                data.push({
-                    statusId: record.id
+            // const data = [];
+            // response.forEach((record, recordIndex) => {
+            //     data.push({
+            //         statusId: record.id
 
-                })
-            });
+            //     })
+            // });
 
             const columns = [
                 {

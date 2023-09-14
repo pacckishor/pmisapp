@@ -23,6 +23,10 @@ import AddForeignTraining from '../foreigntraining/AddForeignTraining';
 import AddPromotion from '../promotion/AddPromotion';
 import PromotionList from '../promotion/PromotionList';
 
+import AddSpouseInfo from '../spouseinfo/AddSpouseInfo';
+import SpouseInfoList from '../spouseinfo/SpouseInfoList';
+
+
 import AppHeader from '../common/AppHeader';
 import NotFound from '../common/NotFound';
 import LoadingIndicator from '../common/LoadingIndicator';
@@ -136,6 +140,10 @@ class App extends Component {
                 <PrivateRoute authenticated={this.state.isAuthenticated} path="/promotion/list" component={PromotionList} handleLogout={this.handleLogout}></PrivateRoute>
                 <PrivateRoute authenticated={this.state.isAuthenticated} path="/promotion/new" component={AddPromotion} handleLogout={this.handleLogout}></PrivateRoute>            
                 
+                <PrivateRoute authenticated={this.state.isAuthenticated} path="/spouseinfo/list" component={SpouseInfoList} handleLogout={this.handleLogout}></PrivateRoute>
+                <PrivateRoute authenticated={this.state.isAuthenticated} path="/spouseinfo/new" component={AddSpouseInfo} handleLogout={this.handleLogout}></PrivateRoute>            
+                
+
                 <PrivateRoute authenticated={this.state.isAuthenticated} path="/generalinfo/list" component={GeneralInfoList} handleLogout={this.handleLogout}></PrivateRoute>
                 <PrivateRoute authenticated={this.state.isAuthenticated} path="/generalinfo/new" component={AddGeneralInfo} handleLogout={this.handleLogout}></PrivateRoute>
                 <PrivateRoute authenticated={this.state.isAuthenticated} path="/generalinfo/edit/:id" component={EditGeneralInfo} handleLogout={this.handleLogout}></PrivateRoute>

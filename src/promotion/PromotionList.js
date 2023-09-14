@@ -140,12 +140,13 @@ class PromotionList extends Component {
                         <thead>
                             <tr>
                                 <th>Id</th>
-                                <th>Nature of Promotion</th>
+                                <th>Govt ID</th>
                                 <th>Promotion Date</th>
-                                <th>Promotion2</th>
-                                <th>Promotion3</th>
-                                <th>Promotion4</th>
-                                
+                                <th>Rank Code</th>
+                                <th>Pay Grade</th>
+                                <th>Actual Promotion Date</th>
+                                <th>Remark</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
 

@@ -55,6 +55,13 @@ class AppHeader extends Component {
             </Link>
             </Menu.Item>,
 
+            <Menu.Item key="/spouseinfo/list">
+            <Link to="/spouseinfo/list">
+                {/*<img src={pollIcon} alt="poll" className="poll-icon" />*/}
+                Spouse Information
+            </Link>
+            </Menu.Item>,
+
             <Menu.Item key="/foreigntraining/list">
             <Link to="/foreigntraining/list">
                 {/*<img src={pollIcon} alt="poll" className="poll-icon" />*/}
