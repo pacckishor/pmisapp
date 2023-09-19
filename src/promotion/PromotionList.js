@@ -1,68 +1,66 @@
-import React, { Component, useEffect, useState } from 'react';
-
+import React, { Component } from 'react';
 import './PromotionList.css';
-import { getRecords } from '../util/APIUtils';
+import { getRecords,deleteRecord } from '../util/APIUtils';
 import 'bootstrap/dist/css/bootstrap.css';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { blue } from '@mui/material/colors';
-//import { API_BASE_URL } from '../constants';
-//import { cyan } from '@mui/material/colors';
 
-
-import { Link } from 'react-router-dom';
-import axios from 'axios';
-
-
+import { notification, Modal } from 'antd';
+import {Table} from 'antd';
 class PromotionList extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            promotionstatuses: [],
+            error: null,
             recordSet: [],
-            response: {}
+            isLoading: false,
+            response: {},
         }
+        this.loadRecords = this.loadRecords.bind(this);
         this.addPromotionInfo = this.addPromotionInfo.bind(this);
         this.edit = this.edit.bind(this);
+        this.delete = this.delete.bind(this);
     }
 
-
-    loadRecords(){
+    loadRecords() {
         let promise;
+
         promise = getRecords("promotion");
 
         if (!promise) {
             return;
         }
 
-        console.log(promise);
-        
+        this.setState({
+            isLoading: true
+        });
+
         promise
             .then(response => {
                 const recordSet = this.state.recordSet.slice();
 
                 this.setState({
-                    recordSet: recordSet.concat(response.content),
+                    recordSet: recordSet.concat(response),
+                    isLoading: false
                 })
-                this.state.response = response; 
-                console.info(this.state.response);
 
 
             }).catch(error => {
-                this.setState({
-                    isLoading: false
-                })
-            });
+            this.setState({
+                isLoading: false
+            })
+        });
+        console.log("Component mounted.")
+       // console.log(this.state.recordSet);
 
     }
+
     componentDidMount() {
-
         this.loadRecords();
-
-
-        
     }
 
 
@@ -74,7 +72,33 @@ class PromotionList extends Component {
         this.props.history.push(`/promotion/edit/${id}`);
     }
 
-    viewPromotionInfo(id) {
+
+    delete(id){
+        const {confirm} = Modal
+        return new Promise((resolve, reject) => {
+            confirm({
+                title: 'Are you sure you want to Delete ?',
+                onOk: () => {
+                    resolve(true)
+
+                    //onRemoveFunctionality here
+                    deleteRecord( "/promotion/",id).then( res => {
+                        this.setState({recordSet: this.state.recordSet.filter(record => record.id !== id)});
+                        notification.success({
+                            message: 'PMIS',
+                            description: "Record deleted successfully.",
+                        });
+                    });
+                },
+                onCancel: () =>{
+                    reject(true)
+                }
+            })
+        })
+
+    }
+
+    view(id) {
         this.props.history.push(`/promotion/update/${id}`);
     }
 
@@ -93,71 +117,105 @@ class PromotionList extends Component {
                 return <p>Loading...</p>;
             }
 
+            const data = [];
+            recordSet.forEach((record, recordIndex) => {
+                data.push({
+                    statusId: record.id,
+                    promotionDate: record.promotionDate,
+                    rankCode: record.rankCode,
+                    payCode: record.payCode,
+                    natureOfPromotion: record.natureOfPromotion,
+                    actualPromotionDate: record.actualPromotionDate,
+                    remarks: record.remarks,
+                    govId: record.govId
+                })
+            });
+
             const columns = [
                 {
-                    title: 'ID',
-                    dataIndex: 'PROMOTION_ID',
-                    key: 'PROMOTION_ID',
+                    title: 'IDMonir',
+                    dataIndex: 'statusId',
+                    key: 'statusId',
                 },
                 {
-                    title: 'Posting Status Name',
+                    title: 'Govt_ID',
+                    dataIndex: 'govId',
+                    key: 'govId;',
+                },
+                {
+                    title: 'Promotion Date',
+                    dataIndex: 'promotionDate',
+                    key: 'promotionDate;',
+                },
+                {
+                    title: 'Rank Code',
+                    dataIndex: 'rankCode',
+                    key: 'rankCode;',
+                },
+                {
+                    title: 'Pay Code',
+                    dataIndex: 'payCode',
+                    key: 'payCode;',
+                },
+                {
+                    title: 'Nature Of Promotion',
                     dataIndex: 'natureOfPromotion',
                     key: 'natureOfPromotion;',
+                },
+                {
+                    title: 'Actual Promotion Date',
+                    dataIndex: 'actualPromotionDate',
+                    key: 'actualPromotionDate;',
+                },
+                {
+                    title: 'Remark',
+                    dataIndex: 'remarks',
+                    key: 'remarks;',
                 },
                 {
                     title: 'Action',
                     key: 'action',
                     render: (_, record) => (
                         <div>
-                        <IconButton onClick={() => this.edit(record.statusId)}
-                            color="success"
-                            aria-label="edit">
-                            <EditIcon sx={{ color: blue[800] }} />
-                        </IconButton>
-                        
+                            <IconButton onClick={() => this.edit(record.statusId)}
+                                color="success"
+                                aria-label="edit">
+                                <EditIcon sx={{ color: blue[800] }} />
+                            </IconButton>
+
+                            <IconButton onClick={() => this.delete(record.statusId)}
+                                        color="warning"
+                                        aria-label="delete">
+                                <DeleteIcon sx={{ color: blue[800] }} />
+                            </IconButton>
                         </div>
-                        
+
                     ),
                 },
 
             ];
-        
-            
-        return (
-            <div>
-                <h2 className="text-center">Promotion Information List</h2>
-                <div className = "">
-                    <Button onClick={this.addPromotionInfo}
+            return (
+                <div>
+                    <h2 className="text-center">Promotion List</h2>
+                    <div className="">
+                        <Button onClick={this.addPromotionInfo}
                             variant="contained"
                             startIcon={<AddIcon />}>
                             ADD
-                    </Button>
-                </div>
-                
-                <br></br>
-                <div className = "row">
-                    <table className = "table table-striped table-bordered">
-                        <thead>
-                            <tr>
-                                <th>Id</th>
-                                <th>Nature of Promotion</th>
-                                <th>Promotion Date</th>
-                                <th>Promotion2</th>
-                                <th>Promotion3</th>
-                                <th>Promotion4</th>
-                                
-                            </tr>
-                        </thead>
-
-                        <tbody>
-                        
-                        </tbody>
-                    </table>
+                        </Button>
+                    </div>
+                    <br></br>
+                    <div className="row">
+                        <div className='tbl-container'>
+                            <Table columns={columns} dataSource={data}
+                                   bordered
+                                   rowClassName={(record, index) => index % 2 === 0 ? 'table-row-odd' :  'table-row-even'}
+                            />
+                        </div>
+                    </div>
 
                 </div>
-
-            </div>
-        );
+            );
     }
 
     }

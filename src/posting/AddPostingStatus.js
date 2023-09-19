@@ -42,13 +42,13 @@ class AddPostingStatus extends Component {
         const postingStatusRequest = {
             statusname: this.state.statusname.value
         };
-        savePostingStatus(postingStatusRequest)
+        savePostingStatus(postingStatusRequest, "/postingstatus")
             .then(response => {
                 notification.success({
                     message: 'PMIS',
                     description: "Record saved.",
                 });
-                this.props.history.push("/postingstatuslist");
+                this.props.history.push("/postingstatus/list");
             }).catch(error => {
             notification.error({
                     message: 'PMIS',

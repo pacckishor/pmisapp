@@ -12,34 +12,26 @@ import { ACCESS_TOKEN } from '../constants';
 import Login from '../user/login/Login';
 import Signup from '../user/signup/Signup';
 import Profile from '../user/profile/Profile';
-
 import AddGeneralInfo from "../generalinfo/AddGeneralInfo";
 import GeneralInfoList from "../generalinfo/GeneralInfoList";
-
 import AddPostingStatus from '../posting/AddPostingStatus';
 import PostingStatusList from '../posting/PostingStatusList';
-
 import ForeignTrainingList from '../foreigntraining/ForeignTrainingList';
+
 import AddForeignTraining from '../foreigntraining/AddForeignTraining';
-
-import LocationTypeList from '../locationtype/LocationTypeList';
-import AddLocationType from '../locationtype/AddLocationType';
-
-import LocationList from '../location/LocationList';
-import AddLocation from '../location/AddLocation'
-
-
-import AddPromotion from '../promotion/AddPromotion';
-import PromotionList from '../promotion/PromotionList';
-
 import AppHeader from '../common/AppHeader';
 import NotFound from '../common/NotFound';
 import LoadingIndicator from '../common/LoadingIndicator';
 import PrivateRoute from '../common/PrivateRoute';
 
+import AddPromotion from '../promotion/AddPromotion';
+import PromotionList from '../promotion/PromotionList';
+import EditPromotion from '../promotion/EditPromotion';
+
 import { Layout, notification } from 'antd';
 import EditGeneralInfo from "../generalinfo/EditGeneralInfo";
 import Welcome from "../Home/Welcome";
+import EditPostingStatus from "../posting/EditPostingStatus";
 const { Content } = Layout;
 
 class App extends Component {
@@ -133,15 +125,6 @@ class App extends Component {
                 <Route path="/users/:username" 
                   render={(props) => <Profile isAuthenticated={this.state.isAuthenticated} currentUser={this.state.currentUser} {...props}  />}>
                 </Route>
-
-
-                <PrivateRoute authenticated={this.state.isAuthenticated} path="/location/list" component={LocationList} handleLogout={this.handleLogout}></PrivateRoute>
-                <PrivateRoute authenticated={this.state.isAuthenticated} path="/location/new" component={AddLocation} handleLogout={this.handleLogout}></PrivateRoute>
-
-
-                <PrivateRoute authenticated={this.state.isAuthenticated} path="/locationtype/list" component={LocationTypeList} handleLogout={this.handleLogout}></PrivateRoute>
-                <PrivateRoute authenticated={this.state.isAuthenticated} path="/locationtype/new" component={AddLocationType} handleLogout={this.handleLogout}></PrivateRoute>
-
                 
                 <PrivateRoute authenticated={this.state.isAuthenticated} path="/foreigntraining/list" component={ForeignTrainingList} handleLogout={this.handleLogout}></PrivateRoute>
                 <PrivateRoute authenticated={this.state.isAuthenticated} path="/foreigntrainings/new" component={AddForeignTraining} handleLogout={this.handleLogout}></PrivateRoute>
@@ -149,11 +132,14 @@ class App extends Component {
 
 
                 <PrivateRoute authenticated={this.state.isAuthenticated} path="/postingstatus/list" component={PostingStatusList} handleLogout={this.handleLogout}></PrivateRoute>
-                <PrivateRoute authenticated={this.state.isAuthenticated} path="/postingstatus/new" component={AddPostingStatus} handleLogout={this.handleLogout}></PrivateRoute>     
+                <PrivateRoute authenticated={this.state.isAuthenticated} path="/postingstatus/new" component={AddPostingStatus} handleLogout={this.handleLogout}></PrivateRoute>                
+                <PrivateRoute authenticated={this.state.isAuthenticated} path="/postingstatus/edit/:id" component={EditPostingStatus} handleLogout={this.handleLogout}></PrivateRoute>
+
 
                 <PrivateRoute authenticated={this.state.isAuthenticated} path="/promotion/list" component={PromotionList} handleLogout={this.handleLogout}></PrivateRoute>
                 <PrivateRoute authenticated={this.state.isAuthenticated} path="/promotion/new" component={AddPromotion} handleLogout={this.handleLogout}></PrivateRoute>            
-                
+                <PrivateRoute authenticated={this.state.isAuthenticated} path="/promotion/edit/:id" component={EditPromotion} handleLogout={this.handleLogout}></PrivateRoute>            
+
                 <PrivateRoute authenticated={this.state.isAuthenticated} path="/generalinfo/list" component={GeneralInfoList} handleLogout={this.handleLogout}></PrivateRoute>
                 <PrivateRoute authenticated={this.state.isAuthenticated} path="/generalinfo/new" component={AddGeneralInfo} handleLogout={this.handleLogout}></PrivateRoute>
                 <PrivateRoute authenticated={this.state.isAuthenticated} path="/generalinfo/edit/:id" component={EditGeneralInfo} handleLogout={this.handleLogout}></PrivateRoute>

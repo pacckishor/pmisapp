@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {getActivityById, updateActivity} from '../util/APIUtils';
+import {getRecordById, updateRecord} from '../util/APIUtils';
 import './AddGeneralInfo.css';
 //import { Link } from 'react-router-dom';
 //import { ACTIVITY_NAME_MIN_LENGTH, ACTIVITY_NAME_MAX_LENGTH,USERNAME_MIN_LENGTH, USERNAME_MAX_LENGTH, DESCRIPTION_MAX_LENGTH, API_BASE_URL }//from '../constants';
@@ -27,7 +27,7 @@ class UpdateActivity extends Component {
     }
 
     componentDidMount(){
-        getActivityById(this.state.activityId).then((res) =>{
+        getRecordById(this.state.activityId).then((res) =>{
             let data = res;
             this.setState({
                 activityName : data.activityName,
@@ -51,7 +51,7 @@ class UpdateActivity extends Component {
         console.log('updateActivityRequest => ' + JSON.stringify(updateActivityRequest));
         console.log('id => ' + JSON.stringify(this.state.activityId));
 
-        updateActivity(this.state.activityId, updateActivityRequest)
+        updateRecord(this.state.activityId, updateActivityRequest)
             .then(response => {
                 notification.success({
                     message: 'PMIS',

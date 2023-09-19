@@ -106,33 +106,33 @@ export function getAllGeneralInfo() {
     });
 }
 
-export function getActivityById(id) {
+export function getRecordById(endpoints, id) {
     return request({
-        url: API_BASE_URL + "/activity/getActivityById/" + id,
+        url: API_BASE_URL + endpoints + id,
         method: 'GET'
     });
 }
 
-export function updateActivity(id, updateActivityRequest) {
+export function updateRecord(updateRequest, endpoint, id) {
     return request({
-        url: API_BASE_URL + "/activity/updateActivity/" + id,
+        url: API_BASE_URL + endpoint + id,
         method: 'PUT',
-        body: JSON.stringify(updateActivityRequest)
+        body: JSON.stringify(updateRequest)
     });
 }
 
 
-export function deleteActivity(id) {
+export function deleteRecord(endpoints,id) {
     return request({
-        url: API_BASE_URL + "/activity/deleteActivity/" + id,
+        url: API_BASE_URL + endpoints + id,
         method: 'DELETE'
     });
 }
 
 
-export function savePostingStatus(postingStatusRequest){
+export function savePostingStatus(postingStatusRequest, endpoint){
     return request({
-        url: API_BASE_URL + "/postingstatus",
+        url: API_BASE_URL + endpoint,
         method: 'POST',
         body: JSON.stringify(postingStatusRequest)
     }); 
@@ -145,25 +145,6 @@ export function saveForeignTraining(foreignTrainingInfoRequest){
         body: JSON.stringify(foreignTrainingInfoRequest)
     }); 
 }
-
-
-export function saveLocationType(locationTypeRequest){
-    return request({
-        url: API_BASE_URL + "/locationtype",
-        method: 'POST',
-        body: JSON.stringify(locationTypeRequest)
-    }); 
-}
-
-
-export function saveLocation(locationRequest){
-    return request({
-        url: API_BASE_URL + "/location",
-        method: 'POST',
-        body: JSON.stringify(locationRequest)
-    }); 
-}
-
 
 export function savePromotion(promotionRequest){
     return request({

@@ -80,7 +80,7 @@ class AddPromotion extends Component {
                     message: 'PMIS',
                     description: "Record saved.",
                 });
-                this.props.history.push("/promotionlist");
+                this.props.history.push("/promotion/list");
             }).catch(error => {
             notification.error({
                     message: 'PMIS',
