@@ -1,15 +1,11 @@
 import React, { Component } from 'react';
-
-import { saveForeignTraining } from '../util/APIUtils';
-
-
+import {saveRecord, getRecords } from '../util/APIUtils';
 import './AddForeignTraining.css';
-
 import {
     POSTING_STATUS_NAME_MAX_LENGTH, POSTING_STATUS_NAME_MIN_LENGTH
 } from '../constants';
 
-import { Form, Input, Button, notification } from 'antd';
+import { Form, Input, Button, notification, Select, DatePicker} from 'antd';
 const FormItem = Form.Item;
 
 
@@ -17,90 +13,79 @@ class AddForeignTraining extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            govId: {
-                value: ''
-            },
-
-            foreignTrainingTitleName: {
-                value: ''
-            },
-
-            instituteName: {
-                value: ''
-            },
-
-            cuntryId: {
-                value: ''
-            },
-
-            fromDate: {
-                value: ''
-            },
-
-            endDate: {
-                value: ''
-            },
-
-            duration: {
-                value: ''
-            },
-
-            grade: {
-                value: ''
-            },
-
-            position: {
-                value: ''
-            },
-
-            remark: {
-                value: ''
-            },
+            govId: '',
+            foreignTrainingTitleName: '',
+            instituteName: '',
+            countryId: '',
+            fromDate: '',
+            endDate: '',
+            duration: '',
+            grade: '',
+            position: '',
+            remark: '',
+            dropdownLocationItems: []
 
 
         }
         this.handleInputChange = this.handleInputChange.bind(this);
+        this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.isFormInvalid = this.isFormInvalid.bind(this);
     }
 
-    handleInputChange(event, validationFun) {
-        const target = event.target;
-        const inputName = target.name;
-        const inputValue = target.value;
+    //DropDown List
+    componentDidMount() {
+        getRecords("location")
+           .then(dropdownLocationData => {
+              this.setState({
+                dropdownLocationItems: dropdownLocationData
+                   })
+               })
+    }
 
+    handleInputChange(event, validationFun) {
+        
         this.setState({
-            [inputName] : {
-                value: inputValue,
-                ...validationFun(inputValue)
-            }
+            [event.target.name] : 
+                event.target.value,
+                    ...validationFun(event.target.value)
+    
         });
     }
+
+
+    handleChange = (event, stateName) =>{
+        this.setState({[stateName]: event})
+     }
+
+    
 
     handleSubmit(event) {
         event.preventDefault();
 
         const foreignTrainingInfoRequest = {
-            govId: this.state.govId.value,
-            foreignTrainingTitleName: this.state.foreignTrainingTitleName.value,
-            instituteName: this.state.instituteName.value,
-            cuntryId: this.state.cuntryId.value,
-            fromDate: this.state.fromDate.value,
-            endDate: this.state.endDate.value,
-            duration: this.state.duration.value,
-            grade: this.state.grade.value,
-            position: this.state.position.value,
-            remark: this.state.remark.value
+            govId: this.state.govId,
+            foreignTrainingTitleName: this.state.foreignTrainingTitleName,
+            instituteName: this.state.instituteName,
+            countryId: this.state.countryId,
+            fromDate: this.state['fromDate'].format('YYYY-MM-DD'),
+            //fromDate: this.state.fromDate.value,
+            endDate: this.state['endDate'].format('YYYY-MM-DD'),
+            //endDate: this.state.endDate,
+            duration: this.state.duration,
+            grade: this.state.grade,
+            position: this.state.position,
+            remark: this.state.remark
 
         };
 
-        saveForeignTraining(foreignTrainingInfoRequest)
+        saveRecord(foreignTrainingInfoRequest, "/foreigntrainings")
             .then(response => {
                 notification.success({
                     message: 'PMIS',
                     description: "Record saved.",
                 });
-                this.props.history.push("/foreigntraininglist");
+                this.props.history.push("/foreigntraining/list");
             }).catch(error => {
             notification.error({
                     message: 'PMIS',
@@ -110,157 +95,188 @@ class AddForeignTraining extends Component {
     }
 
     isFormInvalid() {
-        return !(this.state.govId.validateStatus === 'success',
-         !this.state.foreignTrainingTitleName.validateStatus === 'success',
-         !this.state.instituteName.validateStatus === 'success',
-         !this.state.cuntryId.validateStatus === 'success',
-         !this.state.fromDate.validateStatus === 'success',
-         !this.state.endDate.validateStatus === 'success',
-         !this.state.duration.validateStatus === 'success',
-         !this.state.grade.validateStatus === 'success',
-         !this.state.position.validateStatus === 'success',
-         !this.state.remark.validateStatus === 'succcess'
+        return !(this.state.govId.validateGovId === 'success',
+         this.state.foreignTrainingTitleName.validateForeignTrainingTitleName === 'success',
+         this.state.instituteName.validateInstituteName === 'success',
+         this.state.countryId.validateCountryId === 'success',
+         this.state.fromDate.validateFromDate === 'success',
+         this.state.endDate.validateEndDate === 'success',
+         this.state.duration.validateDuration === 'success',
+         this.state.grade.validateGrade === 'success',
+         this.state.position.validatePosition === 'success',
+         this.state.remark.validateRemark === 'succcess'
         );
     }
 
     render() {
+
+        const { dropdownLocationItems } = this.state;
+        
         return (
             <div className="foreign-training-container">
                 <h2 className="page-title">Create Foreign Training</h2>
                 <div className="">
+
                     <Form onSubmit={this.handleSubmit} className="">
                        
                        <FormItem
                             label="Employee Govt ID"
-                            validateStatus={this.state.govId.validateStatus}
+                            validateStatus={this.state.govId.validateGovId}
                             help={this.state.govId.errorMsg}>
                             <Input
                                 size="large"
                                 name="govId"
                                 autoComplete="off"
-                                placeholder="Please input Employee Govt ID"
-                                value={this.state.govId.value}
+                                placeholder="Please Input Employee Govt ID"
+                                value={this.state.govId}
                                 onChange={(event) => this.handleInputChange(event, this.validateGovId)} />
                         </FormItem>
 
                         <FormItem
                             label="Training Title Name"
-                            validateStatus={this.state.foreignTrainingTitleName.validateStatus}
+                            validateStatus={this.state.foreignTrainingTitleName.validateForeignTrainingTitleName}
                             help={this.state.foreignTrainingTitleName.errorMsg}>
                             <Input
                                 size="large"
                                 name="foreignTrainingTitleName"
                                 autoComplete="off"
-                                placeholder="Please input Training Title Name"
-                                value={this.state.foreignTrainingTitleName.value}
+                                placeholder="Please Input Training Title Name"
+                                value={this.state.foreignTrainingTitleName}
                                 onChange={(event) => this.handleInputChange(event, this.validateForeignTrainingTitleName)} />
                         </FormItem>
 
-
                         <FormItem
                             label="Institute Name"
-                            validateStatus={this.state.instituteName.validateStatus}
+                            validateStatus={this.state.instituteName.validateInstituteName}
                             help={this.state.instituteName.errorMsg}>
                             <Input
                                 size="large"
                                 name="instituteName"
                                 autoComplete="off"
-                                placeholder="Please input Institute Name"
-                                value={this.state.instituteName.value}
+                                placeholder="Please Input Institute Name"
+                                value={this.state.instituteName}
                                 onChange={(event) => this.handleInputChange(event, this.validateInstituteName)} />
-                        </FormItem>
-                       
-                        <FormItem
-                            label="Country Name"
-                            validateStatus={this.state.cuntryId.validateStatus}
-                            help={this.state.cuntryId.errorMsg}>
-                            <Input
-                                size="large"
-                                name="cuntryId"
-                                autoComplete="off"
-                                placeholder="Please input Country Name"
-                                value={this.state.cuntryId.value}
-                                onChange={(event) => this.handleInputChange(event, this.validateCuntryId)} />
                         </FormItem>
 
                         <FormItem
+                            label="Country Id"
+                            //validateStatus={this.state.countryId.validateCountryId}
+                            //help={this.state.countryId.errorMsg}
+                            >
+                            {/* <Input
+                                size="large"
+                                name="countryId"
+                                autoComplete="off"
+                                placeholder="Please Input Country Id)"
+                                value={this.state.countryId.value}
+                                onChange={(event) => this.handleInputChange(event, this.validateCountryId)} 
+                                /> */}
+
+                            <Select placeholder="Select Location Type Name" onChange={(event) => this.handleChange(event,"countryId")} >
+                                {dropdownLocationItems.map((item, index) => <Select.Option value={item.id} key={index}>{item.locationNameEn}</Select.Option>)}
+                            </Select>
+                        </FormItem>
+                       
+                        <FormItem
                             label="Start Date of Training"
-                            validateStatus={this.state.fromDate.validateStatus}
-                            help={this.state.fromDate.errorMsg}>
-                            <Input
+                            name="fromDate"
+                            //validateStatus={this.state.fromDate.validateFromDate}
+                            //help={this.state.fromDate.errorMsg}
+                            >
+                            {/* <Input
                                 size="large"
                                 name="fromDate"
                                 autoComplete="off"
-                                placeholder="Please input From Date (yyyy-mm-dd)"
+                                placeholder="Please Input From Date (yyyy-mm-dd)"
                                 value={this.state.fromDate.value}
-                                onChange={(event) => this.handleInputChange(event, this.validateFromDate)} />
+                                onChange={(event) => this.handleInputChange(event, this.validateFromDate)} 
+                                />  */}
+
+                             <DatePicker
+                                format = 'YYYY-MM-DD'
+                                style={{width: '100%'}}
+                                placeholder="Please Click Calender Icom & Select Date"
+                                onChange={(event) => this.handleChange(event, "fromDate")}
+                             /> 
+
                         </FormItem>
 
                         <FormItem
                             label="End Date of Training"
-                            validateStatus={this.state.endDate.validateStatus}
-                            help={this.state.endDate.errorMsg}>
-                            <Input
+                            name = "endDate"
+                            //validateStatus={this.state.endDate.validateEndDate}
+                            //help={this.state.endDate.errorMsg}
+                            >
+
+                            {/* <Input
                                 size="large"
                                 name="endDate"
                                 autoComplete="off"
-                                placeholder="Please input End Date (yyyy-mm-dd)"
-                                value={this.state.endDate.value}
-                                onChange={(event) => this.handleInputChange(event, this.validateEndDate)} />
+                                placeholder="Please Input End Date (yyyy-mm-dd)"
+                                value={this.state.endDate}
+                                onChange={(event) => this.handleInputChange(event, this.validateEndDate)} 
+                            /> */}
+
+                            <DatePicker
+                                format = 'YYYY-MM-DD'
+                                style={{width: '100%'}}
+                                placeholder="Please Click Calender Icom & Select Date"
+                                onChange={(event) => this.handleChange(event, "endDate")}
+                            /> 
+
                         </FormItem>
 
                         <FormItem
                             label="Duration of Training"
-                            validateStatus={this.state.duration.validateStatus}
+                            validateStatus={this.state.duration.validateDuration}
                             help={this.state.duration.errorMsg}>
                             <Input
                                 size="large"
                                 name="duration"
                                 autoComplete="off"
-                                placeholder="Please input Duration of Training"
-                                value={this.state.duration.value}
+                                placeholder="Please Input Duration of Training"
+                                value={this.state.duration}
                                 onChange={(event) => this.handleInputChange(event, this.validateDuration)} />
                         </FormItem>
 
                         <FormItem
                             label="Grade Point"
-                            validateStatus={this.state.grade.validateStatus}
+                            validateStatus={this.state.grade.validateGrade}
                             help={this.state.grade.errorMsg}>
                             <Input
                                 size="large"
                                 name="grade"
                                 autoComplete="off"
-                                placeholder="Please input Grade Point"
-                                value={this.state.grade.value}
+                                placeholder="Please Input Grade Point"
+                                value={this.state.grade}
                                 onChange={(event) => this.handleInputChange(event, this.validateGrade)} />
                         </FormItem>
 
                         <FormItem
                             label="Position"
-                            validateStatus={this.state.position.validateStatus}
+                            validateStatus={this.state.position.validatePosition}
                             help={this.state.position.errorMsg}>
                             <Input
                                 size="large"
                                 name="position"
                                 autoComplete="off"
-                                placeholder="Please input Position"
-                                value={this.state.position.value}
+                                placeholder="Please Input Position"
+                                value={this.state.position}
                                 onChange={(event) => this.handleInputChange(event, this.validatePosition)} />
                         </FormItem>
 
                         <FormItem
                             label="Remark"
-                            validateStatus={this.state.remark.validateStatus}
+                            validateStatus={this.state.remark.validateRemark}
                             help={this.state.remark.errorMsg}>
                             <Input
                                 size="large"
                                 name="remark"
                                 autoComplete="off"
-                                placeholder="Please input Remark"
-                                value={this.state.remark.value}
+                                placeholder="Please Input Remark"
+                                value={this.state.remark}
                                 onChange={(event) => this.handleInputChange(event, this.validateRemark)} />
                         </FormItem>
-
 
                         <FormItem>
                             <Button type="primary"
@@ -315,8 +331,8 @@ class AddForeignTraining extends Component {
         }
     }
 
-    validateCuntryId = (cuntryId) => {
-        if(!cuntryId) {
+    validateCountryId = (countryId) => {
+        if(!countryId) {
             return {
                 validateStatus: 'error',
                 errorMsg: 'Country ID may not be empty'

@@ -1,13 +1,15 @@
 import React, { Component } from 'react';
-import {savePromotion} from '../util/APIUtils';
+import {getRecords, saveRecord} from '../util/APIUtils';
 import './AddPromotion.css';
+
 //import { Link } from 'react-router-dom';
 import {
     NATUREOFPROMOTION_MAX_LENGTH, NATUREOFPROMOTION_MIN_LENGTH,
     REMARK_MAX_LENGTH, REMARK_MIN_LENGTH,
 } from '../constants';
 
-import { Form, Input, Button, notification } from 'antd';
+import { Form, Input, Button, notification, Select, DatePicker } from 'antd';
+
 const FormItem = Form.Item;
 //const { TextArea } = Input
 
@@ -15,66 +17,66 @@ class AddPromotion extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            govId: {
-                value: ''
-            },
-
-            promotionDate: {
-                value: ''
-            },
-
-            rankCode: {
-                value: ''
-            },
-
-            payCode: {
-                value: ''
-            },
-
-            natureOfPromotion: {
-                value: ''
-            },
-
-            actualPromotionDate: {
-                value: ''
-            },
-
-            remarks: {
-                value: ''
-            },
+            govId:'',
+            promotionDate:'',
+            rankCode:'',
+            payCode:'',
+            natureOfPromotion:'',
+            actualPromotionDate:'',
+            remarks:'',
+            dropdownItems:[],
+            dropdownPayScaleItems:[]
         }
         this.handleInputChange = this.handleInputChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleChange = this.handleChange.bind(this);
         this.isFormInvalid = this.isFormInvalid.bind(this);
     }
 
-    handleInputChange(event, validationFun) {
-        const target = event.target;
-        const inputName = target.name;
-        const inputValue = target.value;
+    componentDidMount(){
+        getRecords("rank")
+        .then(dropdownData=>{
+            this.setState({
+                dropdownItems:dropdownData
+            })
+        })
 
+        getRecords("payscale")
+        .then(dropdownData=>{
+            this.setState({
+                dropdownPayScaleItems:dropdownData
+            })
+        })
+        
+    }
+    handleInputChange(event, validationFun) {
         this.setState({
-            [inputName] : {
-                value: inputValue,
-                ...validationFun(inputValue)
-            }
+            [event.target.name] : 
+                event.target.value,
+                ...validationFun(event.target.value)
         });
+    }
+
+    handleChange = (event,stateName) => {
+        this.setState({ [stateName]: event })
     }
 
     handleSubmit(event) {
         event.preventDefault();
 
         const promotionRequest = {
-            govId: this.state.govId.value,
-            promotionDate: this.state.promotionDate.value,
-            rankCode: this.state.rankCode.value,
-            payCode: this.state.payCode.value,
-            natureOfPromotion: this.state.natureOfPromotion.value,
-            actualPromotionDate: this.state.actualPromotionDate.value,
-            remarks: this.state.remarks.value
+            govId: this.state.govId,
+            promotionDate: this.state['promotionDate'].format('YYYY-MM-DD'),
+            //promotionDate:"2022-02-20",
+            rankCode: this.state.rankCode,
+            payCode: this.state.payCode,
+            natureOfPromotion: this.state.natureOfPromotion,
+            actualPromotionDate: this.state['actualPromotionDate'].format('YYYY-MM-DD'),
+            //actualPromotionDate: this.state.actualPromotionDate,
+            remarks: this.state.remarks
         };
 
-        savePromotion(promotionRequest)
+        saveRecord(promotionRequest,"/promotion")
             .then(response => {
                 notification.success({
                     message: 'PMIS',
@@ -92,16 +94,19 @@ class AddPromotion extends Component {
 
     isFormInvalid() {
         return !(this.state.govId.validateStatus === 'success',
-            !this.state.promotionDate.validatePromotionDate=='success',
-            !this.state.natureOfPromotion.validateNatureOfPromotion === 'success',
-            !this.state.rankCode.validateStatus === 'success',
-            !this.state.payCode.validateStatus === 'success',
-            !this.state.actualPromotionDate.validateStatus === 'success',
-            !this.state.remarks.validateRemark === 'succcess'
+            this.state.promotionDate.validatePromotionDate=='success',
+            this.state.natureOfPromotion.validateNatureOfPromotion === 'success',
+            this.state.rankCode.validateStatus === 'success',
+            this.state.payCode.validateStatus === 'success',
+            this.state.actualPromotionDate.validateStatus === 'success',
+            this.state.remarks.validateRemark === 'succcess'
         );
     }
 
     render() {
+        const { dropdownItems, dropdownPayScaleItems } = this.state;
+        //const dateFormat = "YYYY-MM-DD";
+
         return (
             <div className="signup-container">
                 <h1 className="page-title">Create Promotion</h1>
@@ -116,47 +121,43 @@ class AddPromotion extends Component {
                                 name="govId"
                                 autoComplete="off"
                                 placeholder="Please input Employee Govt ID"
-                                value={this.state.govId.value}
+                                value={this.state.govId}
                                 onChange={(event) => this.handleInputChange(event, this.validateGovId)} />
                         </FormItem>
-                        
+    
                         <FormItem
                             label="Promotion Date"
+                            name="promotionDate"
                             validateStatus={this.state.promotionDate.validateStatus}
-                            help={this.state.promotionDate.errorMsg}>
-                            <Input
-                                size="large"
-                                name="promotionDate"
-                                autoComplete="off"
-                                placeholder="Please input Promotion Date (yyyy-mm-dd)"
-                                value={this.state.promotionDate.value}
-                                onChange={(event) => this.handleInputChange(event, this.validatePromotionDate)} />
+                            help={this.state.promotionDate.errorMsg}
+                            >
+                            <DatePicker 
+                                format='YYYY-MM-DD'
+                                //format='DD-MM-YYYY'
+                                placeholder='YYYY-MM-DD'
+                                style={{ width: '100%' }}
+                                //value={promotionDate}
+                                onChange={(event) => this.handleChange(event,"promotionDate")}
+                            /> 
                         </FormItem>
 
                         <FormItem
-                            label="Rank Code"
-                            validateStatus={this.state.rankCode.validateStatus}
-                            help={this.state.rankCode.errorMsg}>
-                            <Input
-                                size="large"
-                                name="rankCode"
-                                autoComplete="off"
-                                placeholder="Please input rank code"
-                                value={this.state.rankCode.value}
-                                onChange={(event) => this.handleInputChange(event, this.validateRankCode)} />
+                            label="Rank Name"
+                            validateStatus={this.state.rankCode.validateRankCode}
+                            help={this.state.rankCode.errorMsg}
+                        >
+                            <Select placeholder="Enter Rank Name"  onChange={(event) => this.handleChange(event,"rankCode")} >
+                                {dropdownItems.map((item, index) => <Select.Option value={item.id} key={index}>{item.rankName}</Select.Option>)}
+                            </Select>
                         </FormItem>
 
                         <FormItem
-                            label="Pay Code"
-                            validateStatus={this.state.payCode.validateStatus}
+                            label="Pay Scale"
+                            validateStatus={this.state.payCode.validatePayCode}
                             help={this.state.payCode.errorMsg}>
-                            <Input
-                                size="large"
-                                name="payCode"
-                                autoComplete="off"
-                                placeholder="Please input pay code"
-                                value={this.state.payCode.value}
-                                onChange={(event) => this.handleInputChange(event, this.validatePayCode)} />
+                            <Select placeholder="Enter Pay Scale"  onChange={(event) => this.handleChange(event,"payCode")} >
+                                {dropdownPayScaleItems.map((item, index) => <Select.Option value={item.id} key={index}>{item.payScaleName}</Select.Option>)}
+                            </Select>
                         </FormItem>
 
                         <FormItem
@@ -168,7 +169,7 @@ class AddPromotion extends Component {
                                 name="natureOfPromotion"
                                 autoComplete="off"
                                 placeholder="Please input Nature of Promotion"
-                                value={this.state.natureOfPromotion.value}
+                                value={this.state.natureOfPromotion}
                                 onChange={(event) => this.handleInputChange(event, this.validateNatureOfPromotion)} />
                         </FormItem>
 
@@ -176,13 +177,14 @@ class AddPromotion extends Component {
                             label="Actural Promotion Date"
                             validateStatus={this.state.actualPromotionDate.validateStatus}
                             help={this.state.actualPromotionDate.errorMsg}>
-                            <Input
-                                size="large"
-                                name="actualPromotionDate"
-                                autoComplete="off"
-                                placeholder="Please input Actural Promotion Date (yyyy-mm-dd)"
-                                value={this.state.actualPromotionDate.value}
-                                onChange={(event) => this.handleInputChange(event, this.validateActualPromotionDate)} />
+                            <DatePicker 
+                                format='YYYY-MM-DD'
+                                //format='DD-MM-YYYY'
+                                placeholder='YYYY-MM-DD'
+                                style={{ width: '100%' }}
+                                //value={actualPromotionDate}
+                                onChange={(event) => this.handleChange(event,"actualPromotionDate")}
+                            />
                         </FormItem>
 
                         <FormItem
@@ -194,7 +196,7 @@ class AddPromotion extends Component {
                                 name="remarks"
                                 autoComplete="off"
                                 placeholder="Please input Remark"
-                                value={this.state.remarks.value}
+                                value={this.state.remarks}
                                 onChange={(event) => this.handleInputChange(event, this.validateRemark)} />
                         </FormItem>
 
@@ -293,6 +295,14 @@ class AddPromotion extends Component {
                 validateStatus: 'success',
                 errorMsg: null,
             };
+        }
+    }
+    validateRankCode = (rankCode) => {
+        if (!rankCode) {
+            return {
+                validateStatus: 'error',
+                errorMsg: 'Rank Name not found'
+            }
         }
     }
 }

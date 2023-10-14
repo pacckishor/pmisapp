@@ -21,7 +21,7 @@ class PromotionList extends Component {
             response: {},
         }
         this.loadRecords = this.loadRecords.bind(this);
-        this.addPromotionInfo = this.addPromotionInfo.bind(this);
+        this.add = this.add.bind(this);
         this.edit = this.edit.bind(this);
         this.delete = this.delete.bind(this);
     }
@@ -64,7 +64,7 @@ class PromotionList extends Component {
     }
 
 
-    addPromotionInfo() {
+    add() {
         this.props.history.push('/promotion/new');
     }
 
@@ -122,12 +122,13 @@ class PromotionList extends Component {
                 data.push({
                     statusId: record.id,
                     promotionDate: record.promotionDate,
-                    rankCode: record.rankCode,
-                    payCode: record.payCode,
+                    
                     natureOfPromotion: record.natureOfPromotion,
                     actualPromotionDate: record.actualPromotionDate,
                     remarks: record.remarks,
-                    govId: record.govId
+                    govId: record.govId,
+                    rankName: record.rankName,
+                    payScaleName:record.payScaleName
                 })
             });
 
@@ -148,14 +149,14 @@ class PromotionList extends Component {
                     key: 'promotionDate;',
                 },
                 {
-                    title: 'Rank Code',
-                    dataIndex: 'rankCode',
-                    key: 'rankCode;',
+                    title: 'Rank Name',
+                    dataIndex: 'rankName',
+                    key: 'rankName;',
                 },
                 {
-                    title: 'Pay Code',
-                    dataIndex: 'payCode',
-                    key: 'payCode;',
+                    title: 'Pay Scale',
+                    dataIndex: 'payScaleName',
+                    key: 'payScaleName;',
                 },
                 {
                     title: 'Nature Of Promotion',
@@ -198,7 +199,7 @@ class PromotionList extends Component {
                 <div>
                     <h2 className="text-center">Promotion List</h2>
                     <div className="">
-                        <Button onClick={this.addPromotionInfo}
+                        <Button onClick={this.add}
                             variant="contained"
                             startIcon={<AddIcon />}>
                             ADD

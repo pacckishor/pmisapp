@@ -1,15 +1,16 @@
 import React, { Component} from 'react';
 import'./ForeignTrainingList.css';
-import {deleteRecord, getRecords} from "../util/APIUtils";
 import 'bootstrap/dist/css/bootstrap.css';
 import Button from '@mui/material/Button';
-import IconButton from "@mui/material/IconButton";
+import IconButton from '@mui/material/IconButton';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
+import DeleteIcon from '@mui/icons-material/Delete';
+import {deleteRecord, getRecords} from "../util/APIUtils";
+import {Modal, notification, Table} from "antd";
 import {blue} from "@mui/material/colors";
-import { notification, Modal } from 'antd';
-import {Table} from 'antd';
+
+
 
 class ForeignTrainingList extends Component{
     constructor(props) {
@@ -19,11 +20,15 @@ class ForeignTrainingList extends Component{
             recordSet: [],
             isLoading: false,
             response: {},
+ 
         }
         this.loadRecords = this.loadRecords.bind(this);
-        this.addForeignTrainingInfo = this.addForeignTrainingInfo.bind(this);
+
+        this.add = this.add.bind(this);
         this.edit = this.edit.bind(this);
-        this.delete = this.delete.bind(this);  
+        this.delete = this.delete.bind(this);
+        
+        
     }
 
     loadRecords() {
@@ -63,13 +68,12 @@ class ForeignTrainingList extends Component{
         this.loadRecords();
     }
 
-
-    addForeignTrainingInfo(){
-        this.props.history.push('/foreigntrainings/new');
+    add(){
+        this.props.history.push('/foreigntraining/new');
     }
 
     edit(id) {
-        this.props.history.push(`/foreigntrainings/edit/${id}`);
+        this.props.history.push(`/foreigntraining/edit/${id}`);
     }
 
 
@@ -82,8 +86,9 @@ class ForeignTrainingList extends Component{
                     resolve(true)
 
                     //onRemoveFunctionality here
-                    deleteRecord( "/foreigntrainings/",id).then( res => {
-                        this.setState({recordSet: this.state.recordSet.filter(record => record.id !== id)});
+                    deleteRecord("/foreigntrainings/",id).then( res => {
+                        this.setState({recordSet: 
+                        this.state.recordSet.filter(record => record.id !== id)});
                         notification.success({
                             message: 'PMIS',
                             description: "Record deleted successfully.",
@@ -99,9 +104,9 @@ class ForeignTrainingList extends Component{
     }
 
     view(id) {
-        this.props.history.push(`/foreigntrainings/update/${id}`);
-    }
+        this.props.history.push('/foreigntraining/update/${id}');
 
+    }
 
     render() {
 
@@ -120,20 +125,26 @@ class ForeignTrainingList extends Component{
             const data = [];
             recordSet.forEach((record, recordIndex) => {
                 data.push({
-                    statusId: record.id,
+                    foreignTrainingId: record.id,
+                    govId: record.govId,
                     foreignTrainingTitleName: record.foreignTrainingTitleName,
                     instituteName: record.instituteName,
                     fromDate: record.fromDate,
                     endDate: record.endDate,
-                    duration: record.duration
+                    locationNameEn: record.locationNameEn
                 })
             });
 
             const columns = [
                 {
                     title: 'ID',
-                    dataIndex: 'statusId',
-                    key: 'statusId',
+                    dataIndex: 'foreignTrainingId',
+                    key: 'foreignTrainingId',
+                },
+                {
+                    title: 'Govt ID',
+                    dataIndex: 'govId',
+                    key: 'govId',
                 },
                 {
                     title: 'Training Title Name',
@@ -145,28 +156,37 @@ class ForeignTrainingList extends Component{
                     dataIndex: 'instituteName',
                     key: 'instituteName;',
                 },
+                
                 {
                     title: 'From Date',
                     dataIndex: 'fromDate',
-                    key: 'fromDate;',
+                    key: 'fromDate',
                 },
                 {
                     title: 'End Date',
                     dataIndex: 'endDate',
                     key: 'endDate;',
                 },
+
+                {
+                    title: 'Country Name',
+                    dataIndex: 'locationNameEn',
+                    key: 'locationNameEn;',
+                },
+                
+    
                 {
                     title: 'Action',
                     key: 'action',
                     render: (_, record) => (
                         <div>
-                            <IconButton onClick={() => this.edit(record.statusId)}
+                            <IconButton onClick={() => this.edit(record.foreignTrainingId)}
                                         color="success"
                                         aria-label="edit">
                                 <EditIcon sx={{ color: blue[800] }} />
                             </IconButton>
 
-                            <IconButton onClick={() => this.delete(record.statusId)}
+                            <IconButton onClick={() => this.delete(record.foreignTrainingId)}
                                         color="warning"
                                         aria-label="delete">
                                 <DeleteIcon sx={{ color: blue[800] }} />
@@ -179,9 +199,9 @@ class ForeignTrainingList extends Component{
             ];
             return (
                 <div>
-                    <h2 className="text-center">Foreign Training Info</h2>
+                    <h2 className="text-center">Foreign Training Info List</h2>
                     <div className="">
-                        <Button onClick={this.addForeignTrainingInfo}
+                        <Button onClick={this.add}
                                 variant="contained"
                                 startIcon={<AddIcon />}>
                             ADD

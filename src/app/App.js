@@ -12,17 +12,27 @@ import { ACCESS_TOKEN } from '../constants';
 import Login from '../user/login/Login';
 import Signup from '../user/signup/Signup';
 import Profile from '../user/profile/Profile';
+
 import AddGeneralInfo from "../generalinfo/AddGeneralInfo";
 import GeneralInfoList from "../generalinfo/GeneralInfoList";
-import AddPostingStatus from '../posting/AddPostingStatus';
-import PostingStatusList from '../posting/PostingStatusList';
-import ForeignTrainingList from '../foreigntraining/ForeignTrainingList';
 
+import ForeignTrainingList from '../foreigntraining/ForeignTrainingList';
 import AddForeignTraining from '../foreigntraining/AddForeignTraining';
+import EditForeignTraining from '../foreigntraining/EditForeignTraining';
+
+import PostingStatusList from '../postingstatus/PostingStatusList';
+import AddPostingStatus from '../postingstatus/AddPostingStatus';
+import EditPostingStatus from "../postingstatus/EditPostingStatus";
+
+
 import AppHeader from '../common/AppHeader';
 import NotFound from '../common/NotFound';
 import LoadingIndicator from '../common/LoadingIndicator';
 import PrivateRoute from '../common/PrivateRoute';
+
+import AddAward from '../award/AddAward';
+import AwardList from '../award/AwardList';
+import EditAward from '../award/EditAward';
 
 import AddPromotion from '../promotion/AddPromotion';
 import PromotionList from '../promotion/PromotionList';
@@ -31,7 +41,10 @@ import EditPromotion from '../promotion/EditPromotion';
 import { Layout, notification } from 'antd';
 import EditGeneralInfo from "../generalinfo/EditGeneralInfo";
 import Welcome from "../Home/Welcome";
-import EditPostingStatus from "../posting/EditPostingStatus";
+
+
+//import DatePicker from 'react-datepicker'
+
 const { Content } = Layout;
 
 class App extends Component {
@@ -126,23 +139,28 @@ class App extends Component {
                   render={(props) => <Profile isAuthenticated={this.state.isAuthenticated} currentUser={this.state.currentUser} {...props}  />}>
                 </Route>
                 
-                <PrivateRoute authenticated={this.state.isAuthenticated} path="/foreigntraining/list" component={ForeignTrainingList} handleLogout={this.handleLogout}></PrivateRoute>
-                <PrivateRoute authenticated={this.state.isAuthenticated} path="/foreigntrainings/new" component={AddForeignTraining} handleLogout={this.handleLogout}></PrivateRoute>
                 
+                
+                <PrivateRoute authenticated={this.state.isAuthenticated} path="/promotion/list" component={PromotionList} handleLogout={this.handleLogout}></PrivateRoute>
+                <PrivateRoute authenticated={this.state.isAuthenticated} path="/promotion/new" component={AddPromotion} handleLogout={this.handleLogout}></PrivateRoute>            
+                <PrivateRoute authenticated={this.state.isAuthenticated} path="/promotion/edit/:id" component={EditPromotion} handleLogout={this.handleLogout}></PrivateRoute>            
 
+                <PrivateRoute authenticated={this.state.isAuthenticated} path="/award/list" component={AwardList} handleLogout={this.handleLogout}></PrivateRoute>
+                <PrivateRoute authenticated={this.state.isAuthenticated} path="/award/new" component={AddAward} handleLogout={this.handleLogout}></PrivateRoute>            
+                <PrivateRoute authenticated={this.state.isAuthenticated} path="/award/edit/:id" component={EditAward} handleLogout={this.handleLogout}></PrivateRoute>            
+
+                <PrivateRoute authenticated={this.state.isAuthenticated} path="/generalinfo/list" component={GeneralInfoList} handleLogout={this.handleLogout}></PrivateRoute>
+                <PrivateRoute authenticated={this.state.isAuthenticated} path="/generalinfo/new" component={AddGeneralInfo} handleLogout={this.handleLogout}></PrivateRoute>
+                <PrivateRoute authenticated={this.state.isAuthenticated} path="/generalinfo/edit/:id" component={EditGeneralInfo} handleLogout={this.handleLogout}></PrivateRoute>
+                
+                <PrivateRoute authenticated={this.state.isAuthenticated} path="/foreigntraining/list" component={ForeignTrainingList} handleLogout={this.handleLogout}></PrivateRoute>
+                <PrivateRoute authenticated={this.state.isAuthenticated} path="/foreigntraining/new" component={AddForeignTraining} handleLogout={this.handleLogout}></PrivateRoute>
+                <PrivateRoute authenticated={this.state.isAuthenticated} path="/foreigntraining/edit/:id" component={EditForeignTraining} handleLogout={this.handleLogout}></PrivateRoute>
 
                 <PrivateRoute authenticated={this.state.isAuthenticated} path="/postingstatus/list" component={PostingStatusList} handleLogout={this.handleLogout}></PrivateRoute>
                 <PrivateRoute authenticated={this.state.isAuthenticated} path="/postingstatus/new" component={AddPostingStatus} handleLogout={this.handleLogout}></PrivateRoute>                
                 <PrivateRoute authenticated={this.state.isAuthenticated} path="/postingstatus/edit/:id" component={EditPostingStatus} handleLogout={this.handleLogout}></PrivateRoute>
 
-
-                <PrivateRoute authenticated={this.state.isAuthenticated} path="/promotion/list" component={PromotionList} handleLogout={this.handleLogout}></PrivateRoute>
-                <PrivateRoute authenticated={this.state.isAuthenticated} path="/promotion/new" component={AddPromotion} handleLogout={this.handleLogout}></PrivateRoute>            
-                <PrivateRoute authenticated={this.state.isAuthenticated} path="/promotion/edit/:id" component={EditPromotion} handleLogout={this.handleLogout}></PrivateRoute>            
-
-                <PrivateRoute authenticated={this.state.isAuthenticated} path="/generalinfo/list" component={GeneralInfoList} handleLogout={this.handleLogout}></PrivateRoute>
-                <PrivateRoute authenticated={this.state.isAuthenticated} path="/generalinfo/new" component={AddGeneralInfo} handleLogout={this.handleLogout}></PrivateRoute>
-                <PrivateRoute authenticated={this.state.isAuthenticated} path="/generalinfo/edit/:id" component={EditGeneralInfo} handleLogout={this.handleLogout}></PrivateRoute>
                 <Route component={NotFound}></Route>
               </Switch>
             </div>

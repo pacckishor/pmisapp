@@ -3,15 +3,12 @@ import { API_BASE_URL, ACCESS_TOKEN } from '../constants';
 const request = (options) => {
     const headers = new Headers({
         'Content-Type': 'application/json',
-    })
-    
+    })    
     if(localStorage.getItem(ACCESS_TOKEN)) {
         headers.append('Authorization', 'Bearer ' + localStorage.getItem(ACCESS_TOKEN))
     }
-
     const defaults = {headers: headers};
     options = Object.assign({}, defaults, options);
-
     return fetch(options.url, options)
     .then(response => 
         response.json().then(json => {
@@ -22,7 +19,6 @@ const request = (options) => {
         })
     );
 };
-
 
 export function login(loginRequest) {
     return request({
@@ -36,7 +32,6 @@ export function signup(signupRequest) {
     return request({
         url: API_BASE_URL + "/sa/users/signup",
         method: 'POST',
-
         body: JSON.stringify(signupRequest)
     });
 }
@@ -55,12 +50,10 @@ export function checkEmailAvailability(email) {
     });
 }
 
-
 export function getCurrentUser() {
     if(!localStorage.getItem(ACCESS_TOKEN)) {
         return Promise.reject("No access token set.");
     }
-
     return request({
         url: API_BASE_URL + "/sa/users/me",
         method: 'GET',
@@ -78,30 +71,8 @@ export function getRecords(endpoint) {
     if(!localStorage.getItem(ACCESS_TOKEN)) {
         return Promise.reject("No access token set.");
     }
-
     return request({
         url: API_BASE_URL + "/"+endpoint,
-        method: 'GET'
-    });
-}
-
-
-
-export function saveActivity(saveActivityRequest) {
-    return request({
-        url: API_BASE_URL + "/activity/save",
-        method: 'POST',
-        body: JSON.stringify(saveActivityRequest)
-    });
-}
-
-export function getAllGeneralInfo() {
-    if(!localStorage.getItem(ACCESS_TOKEN)) {
-        return Promise.reject("No access token set.");
-    }
-
-    return request({
-        url: API_BASE_URL + "/generalinfo",
         method: 'GET'
     });
 }
@@ -113,6 +84,14 @@ export function getRecordById(endpoints, id) {
     });
 }
 
+export function saveRecord(saveRequest, endpoint){
+    return request({
+        url: API_BASE_URL + endpoint,
+        method: 'POST',
+        body: JSON.stringify(saveRequest)
+    });
+}
+
 export function updateRecord(updateRequest, endpoint, id) {
     return request({
         url: API_BASE_URL + endpoint + id,
@@ -121,35 +100,9 @@ export function updateRecord(updateRequest, endpoint, id) {
     });
 }
 
-
 export function deleteRecord(endpoints,id) {
     return request({
         url: API_BASE_URL + endpoints + id,
         method: 'DELETE'
     });
-}
-
-
-export function savePostingStatus(postingStatusRequest, endpoint){
-    return request({
-        url: API_BASE_URL + endpoint,
-        method: 'POST',
-        body: JSON.stringify(postingStatusRequest)
-    }); 
-}
-
-export function saveForeignTraining(foreignTrainingInfoRequest){
-    return request({
-        url: API_BASE_URL + "/foreigntrainings",
-        method: 'POST',
-        body: JSON.stringify(foreignTrainingInfoRequest)
-    }); 
-}
-
-export function savePromotion(promotionRequest){
-    return request({
-        url: API_BASE_URL + "/promotion",
-        method: 'POST',
-        body: JSON.stringify(promotionRequest)
-    }); 
 }
